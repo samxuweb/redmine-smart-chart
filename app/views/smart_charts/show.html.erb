@@ -1,0 +1,16 @@
+<% content_for :header_tags do%>
+  <%= javascript_include_tag "turbolinks", "highcharts", "highcharts-more", "highstock", :plugin => 'smart_chart' %>
+<% end %>
+<h2><%= l(:smart_chart_title)%></h2>
+<br/>
+<%= high_chart_globals(@chart_globals) %>
+<%= high_chart("some_id", @chart) %>
+<% content_for :sidebar do %>
+  <h3><%= l(:chart)%></h3>
+  <div><%= link_to l(:department_chart), { :controller => 'smart_charts', :action => 'show'}%></div>
+  <div><%= link_to l(:top_ten), { :controller => 'smart_charts', :action => 'show', :dep => 'top10'}%>
+  <% depName.each do |dep| %>
+  <div><%= link_to dep, { :controller => 'smart_charts', :action => 'show', :dep => dep}%></div>
+  <% end %>
+</div>
+<% end %>

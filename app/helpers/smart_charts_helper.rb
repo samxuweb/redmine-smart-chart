@@ -1,0 +1,2 @@
+module SmartChartsHelper
+end

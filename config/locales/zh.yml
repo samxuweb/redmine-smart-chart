@@ -1,0 +1,8 @@
+# English strings go here for Rails i18n
+zh:
+  # my_label: "My label"
+  smart_chart_title: "Redmin任务统计柱状图"
+  chart: "柱状图"
+  department_chart: "所有部门"
+  top_ten: "最多任务的10个人"
+  issue_numbers: "任务数"

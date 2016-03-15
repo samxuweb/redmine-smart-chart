@@ -1,0 +1,8 @@
+# English strings go here for Rails i18n
+en:
+  # my_label: "My label"
+  smart_chart_title: "Redmin issue chart"
+  chart: "Chart"
+  department_chart: "Department Chart"
+  top_ten: "Top 10 issues owner"
+  issue_numbers: "Issue numbers"
