@@ -1,6 +1,7 @@
 class SmartChartsController < ApplicationController
   helper_method :depName
 
+  before_action :checkPermission
   def show
     if params[:dep]
       if params[:dep] == 'top10'
@@ -61,7 +62,7 @@ class SmartChartsController < ApplicationController
   end
 
   def topTenIssueNumber
-    number = topTen.collect {|user| Issue.where(:assigned_to_id => user).count}
+    number = topTen.collect {|user| Issue.visible.open.where(:assigned_to_id => user).count}
   end
 
   def topTenIssueOwner
@@ -90,5 +91,9 @@ class SmartChartsController < ApplicationController
       number << Issue.open.where(:assigned_to_id => id).count
     end
     number
+  end
+
+  def checkPermission
+    redirect_to '/redmine' unless User.current.admin? || Setting.plugin_smart_chart['user_ids'].split(",").include?(User.current.id.to_s)
   end
 end
