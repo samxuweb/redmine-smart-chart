@@ -7,10 +7,10 @@
 <%= high_chart("some_id", @chart) %>
 <% content_for :sidebar do %>
   <h3><%= l(:chart)%></h3>
-  <div><%= link_to l(:department_chart), { :controller => 'smart_charts', :action => 'show'}%></div>
-  <div><%= link_to l(:top_ten), { :controller => 'smart_charts', :action => 'show', :dep => 'top10'}%>
+  <div><%= link_to l(:department_chart), smart_charts_url, :method => :get %></div>
+  <div><%= link_to l(:top_ten), { :controller => 'smart_charts', :action => 'show', :dep => 'top10'}, :method => :get%>
   <% depName.each do |dep| %>
-  <div><%= link_to dep, { :controller => 'smart_charts', :action => 'show', :dep => dep}%></div>
+  <div><%= link_to dep, { :controller => 'smart_charts', :action => 'show', :dep => dep}, :method => :get%></div>
   <% end %>
 </div>
 <% end %>

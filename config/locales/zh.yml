@@ -1,6 +1,7 @@
 # English strings go here for Rails i18n
 zh:
   # my_label: "My label"
+  label_smart_charts: "任务统计"
   smart_chart_title: "Redmin任务统计柱状图"
   chart: "柱状图"
   department_chart: "所有部门"

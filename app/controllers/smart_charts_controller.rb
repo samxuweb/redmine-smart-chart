@@ -1,5 +1,4 @@
 class SmartChartsController < ApplicationController
-  unloadable
   helper_method :depName
 
   def show
@@ -14,7 +13,6 @@ class SmartChartsController < ApplicationController
     else
       datax, datay, title = depName, depIssuesNumber, l(:department_chart)
     end
-
     @chart = LazyHighCharts::HighChart.new('graph') do |f|
       f.title(text: title)
       f.xAxis(categories: datax)
@@ -67,7 +65,7 @@ class SmartChartsController < ApplicationController
   end
 
   def topTenIssueOwner
-    owner = topTen.collect { |user| %Q{<a href="http://192.168.110.22#{issues_path(:set_filter => 1, :assigned_to_id => user)}">"#{User.find(user).name}"</a>}}
+    owner = topTen.collect { |user| %Q{<a href="#{issues_url(:set_filter => 1, :assigned_to_id => user)}">"#{User.find(user).name}"</a>}}
   end
 
   def depIssuesNumber
@@ -79,7 +77,11 @@ class SmartChartsController < ApplicationController
   end
 
   def depMember(dep)
-    Group.find_by_lastname(dep).users.map(&:name)
+    member = []
+    Group.find_by_lastname(dep).users.each do |user|
+      member << %Q{<a href="#{issues_url(:set_filter => 1, :assigned_to_id => user.id)}">"#{user.name}"</a>}
+    end
+    member
   end
 
   def depMemberIssuesNumber(dep)

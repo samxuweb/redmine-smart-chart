@@ -1,6 +1,7 @@
 # English strings go here for Rails i18n
 en:
   # my_label: "My label"
+  label_smart_charts: "Smart Charts"
   smart_chart_title: "Redmin issue chart"
   chart: "Chart"
   department_chart: "Department Chart"
