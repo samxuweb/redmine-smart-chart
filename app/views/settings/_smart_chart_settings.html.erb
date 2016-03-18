@@ -1,7 +1,7 @@
 <table>
   <tbody>
     <tr>
-      <th>Displayed departments(entering groups' id, separated by a comma)</th>
+      <th>Displayed departments:<br/>(entering groups' id, separated by a comma)</th>
       <td>
         <input type="text" id="settings_department_ids" 
                            value="<%= settings['department_ids'] %>" 
@@ -9,11 +9,17 @@
       </td>
     </tr>
     <tr>
-      <th>Authority personnel(entering users' id, separated by a comma)</th>
+      <th>Authority personnel:<br/>(entering users' id, separated by a comma)</th>
       <td>
         <input type="text" id="settings_user_ids" 
                            value="<%= settings['user_ids'] %>" 
                            name="settings[user_ids]" >
+      </td>
+    </tr>
+    <tr>
+      <th>Trakers:</th>
+      <td>
+         <%= select_tag "settings[trackers]", options_for_select(SmartCharts.selectTracker), :multiple => true %>
       </td>
     </tr>
   </tbody>

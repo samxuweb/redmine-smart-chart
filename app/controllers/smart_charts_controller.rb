@@ -52,27 +52,27 @@ class SmartChartsController < ApplicationController
   end
 
   def depName
-    Group.where(:id => Setting.plugin_smart_chart['department_ids'].split(",")).map(&:name)
+    Setting.plugin_smart_chart['department_ids'].split(",").collect {|id| Group.find(id).lastname}
   end
 
 #  private
 
   def topTen
-    Issue.visible.open.select("assigned_to_id, count(assigned_to_id) as assignee").group("assigned_to_id").order("assignee DESC").limit(10).map(&:assigned_to_id)
+    Issue.joins("LEFT JOIN #{User.table_name} on #{User.table_name}.id = #{Issue.table_name}.assigned_to_id").where("#{User.table_name}.status = 1").open.select("assigned_to_id, count(assigned_to_id) as assignee").group("assigned_to_id").order("assignee DESC").limit(10).map(&:assigned_to_id)
   end
 
   def topTenIssueNumber
-    number = topTen.collect {|user| Issue.visible.open.where(:assigned_to_id => user).count}
+    number = topTen.collect {|user| Issue.open.where(:assigned_to_id => user).count}
   end
 
   def topTenIssueOwner
-    owner = topTen.collect { |user| %Q{<a href="#{issues_url(:set_filter => 1, :assigned_to_id => user)}">"#{User.find(user).name}"</a>}}
+    owner = topTen.collect { |user| %Q{<a href="#{issues_url(:set_filter => 1, :assigned_to_id => user)}">"#{User.find(user).lastname}"</a>}}
   end
 
   def depIssuesNumber
     number = []
     for group_id in Setting.plugin_smart_chart['department_ids'].split(",")
-      number << Issue.visible.open.where(:assigned_to_id => Group.find(group_id).users.map(&:id)).count
+      number << Issue.open.where(:assigned_to_id => Group.find(group_id).users.where(:status => 1).map(&:id)).count
     end
     number
   end
@@ -80,7 +80,7 @@ class SmartChartsController < ApplicationController
   def depMember(dep)
     member = []
     Group.find_by_lastname(dep).users.each do |user|
-      member << %Q{<a href="#{issues_url(:set_filter => 1, :assigned_to_id => user.id)}">"#{user.name}"</a>}
+      member << %Q{<a href="#{issues_url(:set_filter => 1, :assigned_to_id => user.id)}">"#{user.lastname}"</a>} if user.active?
     end
     member
   end
@@ -88,7 +88,7 @@ class SmartChartsController < ApplicationController
   def depMemberIssuesNumber(dep)
     number = []
     Group.find_by_lastname(dep).users.map(&:id).each do |id|
-      number << Issue.open.where(:assigned_to_id => id).count
+      number << Issue.open.where(:assigned_to_id => id).count if User.find(id).active?
     end
     number
   end
