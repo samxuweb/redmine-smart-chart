@@ -2,48 +2,64 @@ class SmartChartsController < ApplicationController
   helper_method :depName
 
   before_action :checkPermission
+  def index
+    @date = Time.now
+    @type = 'department'
+    @datax, @datay, @title = depName, depIssuesNumber(issues), l(:department_chart)
+    @datay[:rate] = []
+    for i in 0...@datax.length do
+      @datay[:rate][i] = (@datay[:closed][i] == 0) ? 0 : (@datay[:closed][i] * 100 / (@datay[:new][i] + @datay[:ongoing][i] + @datay[:closed][i]))
+    end
+  end
+
   def show
-    if params[:dep]
-      if params[:dep] == 'top10'
-        datax, datay, title = topTenIssueOwner, topTenIssueNumber, l(:top_ten)
-      else
-        datax = depMember(params[:dep])
-        datay = depMemberIssuesNumber(params[:dep])
-        title = params[:dep]
-      end
+    @date = Time.now
+    @title = params[:dep]
+    @type = params[:dep]
+    @datax = depMember(params[:dep])
+    @datay = depMemberIssuesNumber(params[:dep], issues)
+    @datay[:rate] = []
+    for i in 0...@datax.length do
+      @datay[:rate][i] = (@datay[:closed][i] == 0) ? 0 : (@datay[:closed][i] * 100 / (@datay[:new][i] + @datay[:ongoing][i] + @datay[:closed][i]))
+    end
+    render :action => 'index'
+  end
+
+  def top10
+    @date = Time.now
+    @title = l(:top_ten)
+    @type = 'top10'
+    @datax = topTenIssueOwner(issues)
+    @datay = topTenIssueNumber(issues)
+    @datay[:rate] = []
+    for i in 0...@datax.length do
+      @datay[:rate][i] = (@datay[:closed][i] == 0) ? 0 : (@datay[:closed][i] * 100 / (@datay[:new][i] + @datay[:ongoing][i] + @datay[:closed][i]))
+    end
+    render :action => 'index'
+  end
+
+  def showRecentMonth
+    @date = Time.new(params[:year], params[:month]).end_of_month
+    @type = params[:type]
+    if params[:type] == 'department'
+      @title = l(:department_chart) 
+      @datax = depName
+      @datay = depIssuesNumber(issues(@date))
+    elsif params[:type] == 'top10'
+      @title = l(:top_ten) 
+      @datax = topTenIssueOwner(issues(@date))
+      @datay = topTenIssueNumber(issues(@date))
     else
-      datax, datay, title = depName, depIssuesNumber, l(:department_chart)
+      @title = params[:type] 
+      @datax = depMember(params[:type])
+      @datay = depMemberIssuesNumber(params[:type], issues(@date))
     end
-    @chart = LazyHighCharts::HighChart.new('graph') do |f|
-      f.title(text: title)
-      f.xAxis(categories: datax)
-      f.series(name: l(:issue_numbers), yAxis: 0, data: datay, dataLabels: {enabled: true})
-
-      f.yAxis [
-        {title: {text: l(:issue_numbers), margin: 70} },
-      ]
-
-      f.legend(align: 'right', verticalAlign: 'top', y: 75, x: -50, layout: 'vertical')
-      f.chart({defaultSeriesType: "column"})
+    @datay[:rate] = []
+    for i in 0...@datax.length do
+      @datay[:rate][i] = (@datay[:closed][i] == 0) ? 0 : (@datay[:closed][i] * 100 / (@datay[:new][i] + @datay[:ongoing][i] + @datay[:closed][i]))
     end
-
-    @chart_globals = LazyHighCharts::HighChartGlobals.new do |f|
-      f.global(useUTC: false)
-      f.chart(
-        backgroundColor: {
-          linearGradient: [0, 0, 500, 500],
-          stops: [
-            [0, "rgb(255, 255, 255)"],
-            [1, "rgb(240, 240, 255)"]
-          ]
-        },
-        borderWidth: 2,
-        plotBackgroundColor: "rgba(255, 255, 255, .9)",
-        plotShadow: true,
-        plotBorderWidth: 1,
-      )
-      f.lang(thousandsSep: ",")
-      f.colors(["#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354"])
+    respond_to do |format|
+      format.js {}
     end
   end
 
@@ -57,22 +73,34 @@ class SmartChartsController < ApplicationController
 
 #  private
 
-  def topTen
-    Issue.joins("LEFT JOIN #{User.table_name} on #{User.table_name}.id = #{Issue.table_name}.assigned_to_id").where("#{User.table_name}.status = 1").open.select("assigned_to_id, count(assigned_to_id) as assignee").group("assigned_to_id").order("assignee DESC").limit(10).map(&:assigned_to_id)
+  def issues(date = Time.now.end_of_month)
+    Issue.where(:tracker_id => 4).where("due_date < ? AND due_date > ?", date, date - 1.month)
   end
 
-  def topTenIssueNumber
-    number = topTen.collect {|user| Issue.open.where(:assigned_to_id => user).count}
+  def topTen(issues_from)
+    issues_from.joins("LEFT JOIN #{User.table_name} on #{User.table_name}.id = #{Issue.table_name}.assigned_to_id").where("#{User.table_name}.status = 1").where(:tracker_id => 4).select("assigned_to_id, count(assigned_to_id) as assignee").group("assigned_to_id").order("assignee DESC").limit(10).map(&:assigned_to_id)
   end
 
-  def topTenIssueOwner
-    owner = topTen.collect { |user| %Q{<a href="#{issues_url(:set_filter => 1, :assigned_to_id => user)}">"#{User.find(user).lastname}"</a>}}
+  def topTenIssueNumber(issues_from)
+    number = Hash.new
+    number[:new] = topTen(issues_from).collect {|user| issues_from.where(:assigned_to_id => user, :status => 1).count}
+    number[:ongoing] = topTen(issues_from).collect {|user| issues.where(:assigned_to_id => user, :status => [2,5]).count}
+    number[:closed] = topTen(issues_from).collect {|user| issues.where(:assigned_to_id => user, :status => [3,4,6]).count}
+    number
   end
 
-  def depIssuesNumber
-    number = []
+  def topTenIssueOwner(issues_from)
+    owner = topTen(issues_from).collect { |user| %Q{<a href="#{issues_url(:set_filter => 1, :assigned_to_id => user)}">"#{User.find(user).lastname}"</a>}}
+  end
+
+  def depIssuesNumber(issues_from)
+    number = Hash.new
+    number[:new], number[:ongoing], number[:closed] = [], [], [] 
     for group_id in Setting.plugin_smart_chart['department_ids'].split(",")
-      number << Issue.open.where(:assigned_to_id => Group.find(group_id).users.where(:status => 1).map(&:id)).count
+      issues_to = issues_from.where(:assigned_to_id => Group.find(group_id).users.where(:status => 1).map(&:id))
+      number[:new] << issues_to.where(:status => 1).count
+      number[:ongoing] << issues_to.where(:status => [2,5]).count
+      number[:closed] << issues_to.where(:status => [3,4,6]).count
     end
     number
   end
@@ -85,10 +113,16 @@ class SmartChartsController < ApplicationController
     member
   end
 
-  def depMemberIssuesNumber(dep)
-    number = []
+  def depMemberIssuesNumber(dep, issues_from)
+    number = Hash.new
+    number[:new], number[:ongoing], number[:closed] = [], [], []
     Group.find_by_lastname(dep).users.map(&:id).each do |id|
-      number << Issue.open.where(:assigned_to_id => id).count if User.find(id).active?
+      if User.find(id).active?
+        issues_to = issues_from.where(:assigned_to_id => id)
+        number[:new] << issues_to.where(:status => 1).count
+        number[:ongoing] << issues_to.where(:status => [2,5]).count
+        number[:closed] << issues_to.where(:status => [3,4,6]).count
+      end
     end
     number
   end

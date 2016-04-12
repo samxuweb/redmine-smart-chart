@@ -7,3 +7,10 @@ en:
   department_chart: "Department Chart"
   top_ten: "Top 10 issues owner"
   issue_numbers: "Issue numbers"
+  issue_numbers_new: "New"
+  issue_numbers_ongoing: "Ongoing"
+  issue_numbers_closed: "Closed"
+  rate: "Issue rate"
+  last_month: "<< Last month"
+  next_month: "Next month >>"
+

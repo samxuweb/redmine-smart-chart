@@ -3,12 +3,11 @@
 <% end %>
 <h2><%= l(:smart_chart_title)%></h2>
 <br/>
-<%= high_chart_globals(@chart_globals) %>
-<%= high_chart("some_id", @chart) %>
+<div id='chart'><%= render :partial => 'smart_charts/chart', :locals => {:title => @title, :datax => @datax, :datay => @datay, :date => @date, :type => @type} %></div>
 <% content_for :sidebar do %>
   <h3><%= l(:chart)%></h3>
-  <div><%= link_to l(:department_chart), smart_charts_url, :method => :get %></div>
-  <div><%= link_to l(:top_ten), { :controller => 'smart_charts', :action => 'show', :dep => 'top10'}, :method => :get%>
+  <div><%= link_to l(:department_chart), { :controller => 'smart_charts', :action => 'index'}, :method => :get %></div>
+  <div><%= link_to l(:top_ten), { :controller => 'smart_charts', :action => 'top10'}, :method => :get%>
   <% depName.each do |dep| %>
   <div><%= link_to dep, { :controller => 'smart_charts', :action => 'show', :dep => dep}, :method => :get%></div>
   <% end %>

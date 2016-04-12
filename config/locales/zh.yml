@@ -7,3 +7,10 @@ zh:
   department_chart: "所有部门"
   top_ten: "最多任务的10个人"
   issue_numbers: "任务数"
+  issue_numbers_new: "新任务"
+  issue_numbers_ongoing: "进行中"
+  issue_numbers_closed: "已完成"
+  rate: "达成率"
+  last_month: "<< 上个月"
+  next_month: "下个月 >>"
+

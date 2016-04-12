@@ -1,0 +1,5 @@
+ <%= link_to l(:last_month), {:controller => 'smart_charts', :action => 'showRecentMonth', :year => date.strftime('%Y'), :month => (date.strftime('%m').to_i - 1), :type => type}, :remote => true %>
+ ||
+ <%= link_to l(:next_month), {:controller => 'smart_charts', :action => 'showRecentMonth', :year => date.strftime('%Y'), :month => (date.strftime('%m').to_i + 1), :type => type}, :remote => true %>
+<%= high_chart_globals(chart_globals) %>
+<%= high_chart("some_id", chart(title, datax, datay, date)) %>
