@@ -78,14 +78,14 @@ class SmartChartsController < ApplicationController
   end
 
   def topTen(issues_from)
-    issues_from.joins("LEFT JOIN #{User.table_name} on #{User.table_name}.id = #{Issue.table_name}.assigned_to_id").where("#{User.table_name}.status = 1").where(:tracker_id => 4).select("assigned_to_id, count(assigned_to_id) as assignee").group("assigned_to_id").order("assignee DESC").limit(10).map(&:assigned_to_id)
+    issues_from.joins("LEFT JOIN #{User.table_name} on #{User.table_name}.id = #{Issue.table_name}.assigned_to_id").where("#{User.table_name}.status = 1 AND type = 'User'").where(:tracker_id => 4).select("assigned_to_id, count(assigned_to_id) as assignee").group("assigned_to_id").order("assignee DESC").limit(10).map(&:assigned_to_id)
   end
 
   def topTenIssueNumber(issues_from)
     number = Hash.new
     number[:new] = topTen(issues_from).collect {|user| issues_from.where(:assigned_to_id => user, :status => 1).count}
-    number[:ongoing] = topTen(issues_from).collect {|user| issues.where(:assigned_to_id => user, :status => [2,5]).count}
-    number[:closed] = topTen(issues_from).collect {|user| issues.where(:assigned_to_id => user, :status => [3,4,6]).count}
+    number[:ongoing] = topTen(issues_from).collect {|user| issues_from.where(:assigned_to_id => user, :status => [2,5]).count}
+    number[:closed] = topTen(issues_from).collect {|user| issues_from.where(:assigned_to_id => user, :status => [3,4,6]).count}
     number
   end
 
