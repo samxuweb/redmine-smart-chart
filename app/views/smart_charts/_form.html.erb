@@ -1,0 +1,25 @@
+<div class="panel-heading"><strong><%= l(:issue_form_details) %></strong>
+<div class="panel-body">
+  <table class="table table-striped">
+    <tr><th></th>
+    <% data[:datax].each do |datax|%>
+      <th><%= datax %></th>
+    <% end %>
+    </tr>
+    <tr><td><%= l(:issue_numbers_plan)%></td>
+    <% data[:ongoing].each do |ongoing|%>
+      <td><%= ongoing %></td>
+    <% end %>
+    </tr>
+    <tr><td><%= l(:issue_numbers_closed)%></td>
+    <% data[:closed].each do |closed|%>
+      <td><%= closed %></td>
+    <% end %>
+    </tr>
+    <tr><td><%= l(:rate) %></td>
+    <% data[:rate].each do |rate|%>
+      <td><%= rate %></td>
+    <% end %>
+    </tr>
+  </table>
+</div>

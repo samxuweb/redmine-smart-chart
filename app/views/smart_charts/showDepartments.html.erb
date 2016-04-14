@@ -1,0 +1,11 @@
+<% content_for :header_tags do%>
+  <%= javascript_include_tag "echarts.min", :plugin => 'smart_chart' %>
+  <%= stylesheet_link_tag "bootstrap-theme", "bootstrap", :plugin => 'smart_chart' %>
+<% end %>
+<h2><%= l(:department_chart)%></h2>
+<div id='chart'>
+<%= render :partial => 'smart_charts/departments', :locals => {:data => @data, :date => @date} %>
+</div>
+<% content_for :sidebar do %>
+  <%= render :partial => 'smart_charts/sidebar' %>
+<% end %>

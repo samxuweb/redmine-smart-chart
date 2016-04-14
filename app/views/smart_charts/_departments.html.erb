@@ -1,0 +1,31 @@
+<h3><%= date.strftime('%Y-%m') %></h3>
+<%= link_to l(:last_month), {:controller => 'smart_charts', :action => 'showRecentMonth', :year => date.strftime('%Y'), :month => (date.strftime('%m').to_i - 1)}, :remote => true %>
+ ||
+ <%= link_to l(:next_month), {:controller => 'smart_charts', :action => 'showRecentMonth', :year => date.strftime('%Y'), :month => (date.strftime('%m').to_i + 1)}, :remote => true %>
+<%= render :partial => 'smart_charts/form', :locals => {:data => data} %>
+<div id="main1" style="width: 99%;height: 300px"></div>
+  <script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('main1'));
+
+    var option = {
+      title: {
+//        text: "<%= l(:department_chart) %>",
+//	subtext: "<%= date.strftime('%Y-%m') %>",
+      },
+      tooltip: {},
+      legend: {
+        data: "<%= l(:rate)%>"
+      },
+      xAxis: {
+        data: <%=raw data[:datax] %>
+      },
+      yAxis: {},
+        series: [{
+          name: "<%= l(:rate)%>",
+          type: 'line',
+          data: <%= data[:rate]%>
+        }]
+    };
+
+    myChart.setOption(option);
+  </script>

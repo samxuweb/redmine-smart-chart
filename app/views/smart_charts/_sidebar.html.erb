@@ -1,0 +1,6 @@
+  <h3><%= l(:chart)%></h3>
+  <div><%= link_to l(:all_issues_rate), { :controller => 'smart_charts', :action => 'index'}, :method => :get %></div>
+  <div><%= link_to l(:department_chart), { :controller => 'smart_charts', :action => 'showDepartments'}, :method => :get %></div>
+  <% depName.each do |dep| %>
+  <div><%= link_to dep, { :controller => 'smart_charts', :action => 'show', :dep => dep}, :method => :get%></div>
+  <% end %>

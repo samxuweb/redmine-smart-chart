@@ -1,0 +1,1 @@
+$('#details-chart').html('<%= escape_javascript(render :partial => 'smart_charts/form', :locals => { :data => @data})%><%= escape_javascript(render :partial => 'smart_charts/chart', :locals => { :chartdata => @data, :title => @title})%>')

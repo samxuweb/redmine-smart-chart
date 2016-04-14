@@ -2,7 +2,7 @@
 en:
   # my_label: "My label"
   label_smart_charts: "Smart Charts"
-  smart_chart_title: "Redmin issue chart"
+  smart_chart_title: "Redmine issue rate"
   chart: "Chart"
   department_chart: "Department Chart"
   top_ten: "Top 10 issues owner"
@@ -13,4 +13,6 @@ en:
   rate: "Issue rate"
   last_month: "<< Last month"
   next_month: "Next month >>"
-
+  all_issues_rate: "All issues"
+  issue_numbers_plan: "Plan"
+  issue_form_details: "Details of each month"

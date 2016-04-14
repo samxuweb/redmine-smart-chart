@@ -1,5 +1,25 @@
- <%= link_to l(:last_month), {:controller => 'smart_charts', :action => 'showRecentMonth', :year => date.strftime('%Y'), :month => (date.strftime('%m').to_i - 1), :type => type}, :remote => true %>
- ||
- <%= link_to l(:next_month), {:controller => 'smart_charts', :action => 'showRecentMonth', :year => date.strftime('%Y'), :month => (date.strftime('%m').to_i + 1), :type => type}, :remote => true %>
-<%= high_chart_globals(chart_globals) %>
-<%= high_chart("some_id", chart(title, datax, datay, date)) %>
+<div id="<%= title %>" style="width: 99%;height: 300px"></div>
+  <script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('<%= title%>'));
+
+    var option = {
+      title: {
+//        text: "<%= title %>",
+      },
+      tooltip: {},
+      legend: {
+        data: "<%= l(:rate)%>"
+      },
+      xAxis: {
+        data: <%=raw chartdata[:datax] %>
+      },
+      yAxis: {},
+        series: [{
+          name: "<%= l(:rate)%>",
+          type: 'line',
+          data: <%= chartdata[:rate]%>
+        }]
+    };
+
+    myChart.setOption(option);
+  </script>

@@ -1,10 +1,15 @@
 <% content_for :header_tags do%>
-  <%= javascript_include_tag "echarts.min", "bootstrap", :plugin => 'smart_chart' %>
+  <%= javascript_include_tag "echarts.min", :plugin => 'smart_chart' %>
   <%= stylesheet_link_tag "bootstrap-theme", "bootstrap", :plugin => 'smart_chart' %>
 <% end %>
-<h2><%= l(:smart_chart_title)%></h2>
+<h2><%= @title%></h2>
 <div id='form'><%= render :partial => 'smart_charts/form', :locals => {:data => @data} %></div>
 <div id='chart'><%= render :partial => 'smart_charts/chart', :locals => {:chartdata => @data, :title => @title} %></div>
 <% content_for :sidebar do %>
   <%= render :partial => 'smart_charts/sidebar' %>
 <% end %>
+<% @members.each do |member| %>
+<%= link_to member.lastname, {:controller => 'smart_charts', :action => 'showDetails', :member => member.id}, :remote => true, class: "btn btn-default" %>
+<% end %>
+<div id="details-form"><div>
+<div id="details-chart"><div>
