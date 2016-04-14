@@ -89,7 +89,7 @@ class SmartChartsController < ApplicationController
 #  private
 
   def issues(date = Time.now.end_of_month)
-    Issue.where(:tracker_id => 4).where("due_date < ? AND due_date > ?", date, date - 1.month)
+    Issue.where(:tracker_id => Setting.plugin_smart_chart["trackers"]).where("due_date < ? AND due_date > ?", date, date - 1.month)
   end
 
   def allIssuesNumber(type, date, d = '')

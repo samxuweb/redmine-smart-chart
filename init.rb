@@ -1,8 +1,8 @@
 Redmine::Plugin.register :smart_chart do
   name 'Smart Chart plugin'
   author 'Sam Xu'
-  description 'It can build a engineer loading chart and projects loading chart.'
-  version '0.1.0'
+  description 'It can show the current status of redmine task.'
+  version '0.2.0'
   url 'https://github.com/samxuweb/smart_chart'
   author_url 'https://github.com/samxuweb'
 
